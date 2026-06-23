@@ -406,29 +406,23 @@
 
 <script>
 /* =====================================================================
-   CONFIGURACIÓN — edita esto
+   CONFIGURACIÓN
 =====================================================================
 
- ¿CÓMO GUARDAR LA LISTA DE INVITADOS? Elige UN método:
+ MÉTODO ACTIVO: 'netlify'  ✅  (tu sitio está en Netlify)
 
- • 'whatsapp'  → Cada confirmación te llega como mensaje de WhatsApp.
-                 (La lista la llevas tú. Cero configuración.)
+ El invitado solo llena el formulario y toca "Confirmar". Ya está. No se
+ abre WhatsApp ni el correo, y no se muestra ningún dato tuyo en la página.
 
- • 'formspree' → Se guarda sola en un panel que puedes ver y exportar
-                 a Excel/CSV. Funciona en CUALQUIER hosting (Vercel, etc).
-                 1) Crea cuenta gratis en formspree.io
-                 2) Crea un form y copia su URL (https://formspree.io/f/xxxx)
-                 3) Pégala abajo en RSVP_ENDPOINT y pon SAVE_METHOD='formspree'
+ Las confirmaciones se guardan SOLAS en:
+   Netlify → tu sitio → pestaña "Forms"
+ Ahí ves la lista completa y la descargas a Excel/CSV cuando quieras.
 
- • 'netlify'   → Si publicas en Netlify, las confirmaciones aparecen solas
-                 en Netlify → Forms (con exportar a CSV). Solo pon
-                 SAVE_METHOD='netlify'. No hace falta nada más.
-
- Si algo falla, siempre cae de vuelta a WhatsApp para no perder la confirmación.
-*/
-const SAVE_METHOD    = 'whatsapp';      // 'whatsapp' | 'formspree' | 'netlify'
-const WHATSAPP_NUMBER = '525547734042'; // México (52) + tu número. Si al probar no te llega, cámbialo a '5215547734042'
-const RSVP_ENDPOINT   = '';             // solo para 'formspree': pega tu URL aquí
+ (Otros métodos por si algún día los necesitas: 'whatsapp', 'formspree'.)
+===================================================================== */
+const SAVE_METHOD     = 'netlify';   // 'netlify' | 'whatsapp' | 'formspree'
+const WHATSAPP_NUMBER = '';          // solo si usas 'whatsapp'
+const RSVP_ENDPOINT   = '';          // solo si usas 'formspree'
 
 // Fecha del evento en El Salvador (UTC-6): 19 dic 2026, 5:00 PM = 23:00 UTC
 const TARGET = Date.UTC(2026, 11, 19, 23, 0, 0);
@@ -532,9 +526,9 @@ form.addEventListener('submit', async (e) => {
       showSuccess(goes);
     }
   } catch(err){
-    // Plan B: no perder la confirmación → WhatsApp
-    openWhatsApp(name, msg, goes);
-    showSuccess(goes);
+    // Si el envío falla (p. ej. sin conexión), permitir reintentar
+    btn.disabled = false; btn.textContent = 'Confirmar asistencia';
+    note.textContent = 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.';
   }
 });
 
